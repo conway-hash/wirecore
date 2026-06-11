@@ -68,7 +68,7 @@
 	<!-- Hero -->
 	<section class="hero" aria-labelledby="hero-heading">
 		<div class="container hero-inner">
-			<p class="eyebrow">Profesionálne riešenia pre váš domov DEV</p>
+			<p class="eyebrow">Profesionálne riešenia pre váš domov</p>
 			<h1 id="hero-heading">
 				Elektroinstalacie,<br />
 				kamery &amp; solárne panely
