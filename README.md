@@ -1,6 +1,6 @@
-# Wirecore
+# WireCore
 
-Static marketing site for Wirecore — professional electrical installations, security camera systems, and solar panel installation.
+Static marketing site for WireCore — professional electrical installations, security camera systems, and solar panel installation.
 
 Built with **Svelte 5 + SvelteKit**, fully pre-rendered, and deployed on **Cloudflare Pages**.
 
