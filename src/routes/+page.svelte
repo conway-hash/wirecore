@@ -1,5 +1,5 @@
 <script lang="ts">
-	let activeFilter = $state('Všetky');
+	// let activeFilter = $state('Všetky');
 	let activeSection = $state('domov');
 	let cookieConsent = $state<string | null>(null);
 	let privacyOpen = $state(false);
@@ -40,16 +40,16 @@
 		updateActiveSection();
 	});
 
-	const filters = ['Všetky', 'Bleskozvod', 'Hrubá stavba', 'Podlahové kúrenie', 'Rozvádzač'];
-
-	const projects = [
-		{ category: 'Rozvádzač', title: 'Priemyselný rozvádzač' },
-		{ category: 'Hrubá stavba', title: 'Kabeláž novostavby' },
-		{ category: 'Podlahové kúrenie', title: 'Elektrické rohože' },
-		{ category: 'Bleskozvod', title: 'Ochrana pred bleskom' },
-		{ category: 'Bleskozvod', title: 'Základový zemnič' },
-		{ category: 'Rozvádzač', title: 'Bytový rozvádzač' }
-	];
+	// Referencie – hidden until photos are ready
+	// const filters = ['Všetky', 'Bleskozvod', 'Hrubá stavba', 'Podlahové kúrenie', 'Rozvádzač'];
+	// const projects = [
+	// 	{ category: 'Rozvádzač', title: 'Priemyselný rozvádzač' },
+	// 	{ category: 'Hrubá stavba', title: 'Kabeláž novostavby' },
+	// 	{ category: 'Podlahové kúrenie', title: 'Elektrické rohože' },
+	// 	{ category: 'Bleskozvod', title: 'Ochrana pred bleskom' },
+	// 	{ category: 'Bleskozvod', title: 'Základový zemnič' },
+	// 	{ category: 'Rozvádzač', title: 'Bytový rozvádzač' }
+	// ];
 
 	const reviews = [
 		{
@@ -66,9 +66,9 @@
 		}
 	];
 
-	const visibleProjects = $derived(
-		activeFilter === 'Všetky' ? projects : projects.filter((p) => p.category === activeFilter)
-	);
+	// const visibleProjects = $derived(
+	// 	activeFilter === 'Všetky' ? projects : projects.filter((p) => p.category === activeFilter)
+	// );
 </script>
 
 <svelte:head>
@@ -121,11 +121,13 @@
 	<\/script>`}
 </svelte:head>
 
+<!-- iconBolt snippet – used by Referencie section, restore when uncommenting
 {#snippet iconBolt(cls: string = 'icon')}
 	<svg class={cls} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 		<path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" />
 	</svg>
 {/snippet}
+-->
 
 {#snippet iconStar()}
 	<svg class="icon icon-star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -351,12 +353,12 @@
 		</div>
 	</section>
 
-	<!-- Referencie -->
+	<!-- Referencie – hidden until photos are ready
 	<section class="portfolio" id="referencie" aria-labelledby="portfolio-heading">
 		<div class="container">
 			<h2 id="portfolio-heading" class="section-title center">Referencie</h2>
 
-<div class="filters" role="group" aria-label="Filter projektov">
+			<div class="filters" role="group" aria-label="Filter projektov">
 				{#each filters as filter (filter)}
 					<button
 						class="chip"
@@ -387,6 +389,7 @@
 			</div>
 		</div>
 	</section>
+	-->
 
 	<!-- Kontakt -->
 	<section class="contact" id="kontakt" aria-labelledby="contact-heading">
@@ -555,6 +558,7 @@
 		text-align: center;
 	}
 
+	/* .section-title.accent-border, .section-sub – used by Referencie, restore when uncommenting
 	.section-title.accent-border {
 		border-left: 4px solid var(--clr-accent);
 		padding-left: 1rem;
@@ -567,6 +571,7 @@
 		margin-inline: auto;
 		margin-bottom: 3rem;
 	}
+	*/
 
 	/* ---------- buttons ---------- */
 	.btn {
@@ -1051,116 +1056,23 @@
 		color: var(--clr-text);
 	}
 
-	/* ---------- portfolio ---------- */
-	.portfolio {
-		padding-block: var(--section-gap);
-	}
-
-	.filters {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		gap: 0.75rem;
-		margin-bottom: 3rem;
-	}
-
-	.chip {
-		padding: 0.5rem 1.5rem;
-		border: none;
-		border-radius: var(--radius-full);
-		background: var(--clr-surface);
-		color: var(--clr-body);
-		font-size: 0.875rem;
-		font-weight: 600;
-		letter-spacing: 0.05em;
-		transition: background 0.15s, color 0.15s;
-	}
-
-	.chip:hover {
-		background: var(--clr-surface-high);
-	}
-
-	.chip-active {
-		background: var(--clr-accent);
-		color: var(--clr-on-accent);
-		font-weight: 700;
-	}
-
-	.gallery {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 1.5rem;
-	}
-
-	.gallery-item {
-		position: relative;
-		aspect-ratio: 4 / 3;
-		border-radius: var(--radius-md);
-		overflow: hidden;
-		background: var(--clr-surface);
-		border: 1px solid var(--clr-surface-variant);
-		display: flex;
-		flex-direction: column;
-		transition: border-color 0.3s;
-	}
-
-	.gallery-item:hover {
-		border-color: rgba(217, 255, 0, 0.5);
-	}
-
-	.gallery-visual {
-		flex: 1;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background:
-			radial-gradient(circle at 50% 40%, rgba(217, 255, 0, 0.06), transparent 65%),
-			repeating-linear-gradient(
-				-45deg,
-				transparent 0,
-				transparent 29px,
-				rgba(255, 255, 255, 0.02) 29px,
-				rgba(255, 255, 255, 0.02) 30px
-			);
-	}
-
-	.gallery-bolt {
-		width: 3rem;
-		height: 3rem;
-		color: rgba(217, 255, 0, 0.25);
-		transition: color 0.3s, filter 0.3s;
-	}
-
-	.gallery-item:hover .gallery-bolt {
-		color: rgba(217, 255, 0, 0.6);
-		filter: drop-shadow(0 0 20px rgba(217, 255, 0, 0.3));
-	}
-
-	.gallery-caption {
-		padding: 1.25rem 1.5rem;
-		background: linear-gradient(to top, rgba(14, 14, 14, 0.9), rgba(14, 14, 14, 0.4));
-	}
-
-	.gallery-category {
-		display: block;
-		font-size: 0.75rem;
-		font-weight: 600;
-		letter-spacing: 0.15em;
-		text-transform: uppercase;
-		color: var(--clr-accent);
-		margin-bottom: 0.25rem;
-	}
-
-	.gallery-caption h3 {
-		font-size: 1.25rem;
-		font-weight: 600;
-		color: var(--clr-text);
-	}
-
-	.portfolio-cta {
-		margin-top: 3rem;
-		text-align: center;
-	}
+	/* ---------- portfolio – hidden until photos are ready ----------
+	.portfolio { padding-block: var(--section-gap); }
+	.filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-bottom: 3rem; }
+	.chip { padding: 0.5rem 1.5rem; border: none; border-radius: var(--radius-full); background: var(--clr-surface); color: var(--clr-body); font-size: 0.875rem; font-weight: 600; letter-spacing: 0.05em; transition: background 0.15s, color 0.15s; }
+	.chip:hover { background: var(--clr-surface-high); }
+	.chip-active { background: var(--clr-accent); color: var(--clr-on-accent); font-weight: 700; }
+	.gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+	.gallery-item { position: relative; aspect-ratio: 4 / 3; border-radius: var(--radius-md); overflow: hidden; background: var(--clr-surface); border: 1px solid var(--clr-surface-variant); display: flex; flex-direction: column; transition: border-color 0.3s; }
+	.gallery-item:hover { border-color: rgba(217, 255, 0, 0.5); }
+	.gallery-visual { flex: 1; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 40%, rgba(217, 255, 0, 0.06), transparent 65%), repeating-linear-gradient(-45deg, transparent 0, transparent 29px, rgba(255, 255, 255, 0.02) 29px, rgba(255, 255, 255, 0.02) 30px); }
+	.gallery-bolt { width: 3rem; height: 3rem; color: rgba(217, 255, 0, 0.25); transition: color 0.3s, filter 0.3s; }
+	.gallery-item:hover .gallery-bolt { color: rgba(217, 255, 0, 0.6); filter: drop-shadow(0 0 20px rgba(217, 255, 0, 0.3)); }
+	.gallery-caption { padding: 1.25rem 1.5rem; background: linear-gradient(to top, rgba(14, 14, 14, 0.9), rgba(14, 14, 14, 0.4)); }
+	.gallery-category { display: block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--clr-accent); margin-bottom: 0.25rem; }
+	.gallery-caption h3 { font-size: 1.25rem; font-weight: 600; color: var(--clr-text); }
+	.portfolio-cta { margin-top: 3rem; text-align: center; }
+	----------------------------------------------------------------------*/
 
 	/* ---------- contact ---------- */
 	.contact {
@@ -1521,8 +1433,7 @@
 		}
 
 
-		.review-grid,
-		.gallery {
+		.review-grid {
 			grid-template-columns: 1fr 1fr;
 		}
 
@@ -1599,7 +1510,6 @@
 
 	@media (max-width: 560px) {
 		.review-grid,
-		.gallery,
 		.field-row {
 			grid-template-columns: 1fr;
 		}
