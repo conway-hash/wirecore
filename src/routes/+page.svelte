@@ -500,7 +500,7 @@
 {#if cookieConsent === null}
 	<div class="cookie-banner" role="dialog" aria-label="Súhlas s cookies">
 		<p class="cookie-text">
-			Táto stránka používa cookies od Google Maps na zobrazenie mapy. Viac info v
+			Táto stránka zbiera údaje z kontaktného formulára a používa cookies od Google Maps. Viac info v
 			<button class="cookie-link" onclick={() => privacyOpen = true}>Ochrane súkromia</button>.
 		</p>
 		<div class="cookie-actions">
@@ -1329,8 +1329,14 @@
 	}
 
 	.cookie-link {
+		background: none;
+		border: none;
+		padding: 0;
+		font-size: inherit;
+		font-family: inherit;
 		color: var(--clr-accent);
 		text-decoration: underline;
+		cursor: pointer;
 	}
 
 	.cookie-actions {
