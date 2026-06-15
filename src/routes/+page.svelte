@@ -22,7 +22,6 @@
 		{ id: 'domov', label: 'Domov' },
 		{ id: 'o-nas', label: 'O nás' },
 		{ id: 'sluzby', label: 'Služby' },
-		{ id: 'referencie', label: 'Referencie' },
 		{ id: 'kontakt', label: 'Kontakt' }
 	];
 
