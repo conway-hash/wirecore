@@ -72,51 +72,76 @@
 </script>
 
 <svelte:head>
-	<title>WireCore | Elektroinstalacie, Kamerové Systémy, Fotovoltaika</title>
+	<title>WireCore | Elektroinštalácie, Bleskozvody, Fotovoltika – Trnavský kraj</title>
 	<meta
 		name="description"
-		content="WireCore – profesionálne elektroinstalacie, montáž kamerových systémov a inštalácia fotovoltaických panelov. Spoľahlivé riešenia pre váš domov a firmu."
+		content="WireCore – profesionálne elektroinštalácie, bleskozvody a fotovoltika v Trnavskom kraji. Bezplatná konzultácia, práca na kľúč. Kontakt: +421 917 951 473."
 	/>
-	<meta name="robots" content="noindex, nofollow" />
+	<meta name="robots" content="index, follow" />
 	<link rel="canonical" href="https://wirecore.sk/" />
+
+	<!-- Local SEO -->
+	<meta name="geo.region" content="SK-TA" />
+	<meta name="geo.placename" content="Žlkovce, Trnavský kraj" />
 
 	<!-- Open Graph -->
 	<meta property="og:type" content="website" />
 	<meta property="og:url" content="https://wirecore.sk/" />
-	<meta property="og:title" content="WireCore | Elektroinstalacie, Kamerové Systémy, Fotovoltaika" />
+	<meta property="og:title" content="WireCore | Elektroinštalácie, Bleskozvody, Fotovoltika" />
 	<meta
 		property="og:description"
-		content="Profesionálne elektroinstalacie, montáž kamerových systémov a inštalácia fotovoltaických panelov. Spoľahlivé riešenia pre váš domov a firmu."
+		content="Profesionálne elektroinštalácie, bleskozvody a fotovoltika v Trnavskom kraji. Bezplatná konzultácia, práca na kľúč."
 	/>
+	<meta property="og:image" content="https://wirecore.sk/og-image.png" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
 	<meta property="og:locale" content="sk_SK" />
 	<meta property="og:site_name" content="WireCore" />
 
 	<!-- Twitter / X -->
 	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:title" content="WireCore | Elektroinstalacie, Kamerové Systémy, Fotovoltaika" />
+	<meta name="twitter:title" content="WireCore | Elektroinštalácie, Bleskozvody, Fotovoltika" />
 	<meta
 		name="twitter:description"
-		content="Profesionálne elektroinstalacie, montáž kamerových systémov a inštalácia fotovoltaických panelov."
+		content="Profesionálne elektroinštalácie, bleskozvody a fotovoltika v Trnavskom kraji. Bezplatná konzultácia."
 	/>
+	<meta name="twitter:image" content="https://wirecore.sk/og-image.png" />
 
 	<!-- JSON-LD structured data -->
 	{@html `<script type="application/ld+json">
 	{
 		"@context": "https://schema.org",
-		"@type": "LocalBusiness",
-		"name": "WireCore",
-		"description": "Profesionálne elektroinstalacie, montáž kamerových systémov a inštalácia fotovoltaických panelov.",
+		"@type": "ElectricalContractor",
+		"name": "WireCore s.r.o.",
+		"description": "Profesionálne elektroinštalácie, bleskozvody, slaboprúd a fotovoltika v Trnavskom kraji.",
 		"url": "https://wirecore.sk",
+		"telephone": "+421917951473",
+		"email": "info@wirecore.sk",
 		"inLanguage": "sk",
+		"address": {
+			"@type": "PostalAddress",
+			"streetAddress": "Žlkovce 313",
+			"postalCode": "920 42",
+			"addressLocality": "Žlkovce",
+			"addressRegion": "Trnavský kraj",
+			"addressCountry": "SK"
+		},
 		"areaServed": {
-			"@type": "Country",
-			"name": "Slovensko"
+			"@type": "AdministrativeArea",
+			"name": "Trnavský kraj"
 		},
 		"serviceType": [
-			"Elektroinstalacie",
-			"Kamerové systémy",
-			"Fotovoltaické panely"
-		]
+			"Elektroinštalácie",
+			"Silnoprúd",
+			"Slaboprúd",
+			"Bleskozvody",
+			"Uzemnenie",
+			"Fotovoltika"
+		],
+		"legalName": "WireCore s.r.o.",
+		"taxID": "2122864370",
+		"image": "https://wirecore.sk/og-image.png",
+		"logo": "https://wirecore.sk/og-image.png"
 	}
 	<\/script>`}
 </svelte:head>
@@ -216,7 +241,7 @@
 	<section class="about" id="o-nas" aria-labelledby="about-heading">
 		<div class="container about-grid">
 			<div class="about-visual">
-				<img src="/images/person.webp" alt="WireCore elektrikár" class="about-img" />
+				<img src="/images/person.webp" alt="Elektrikár WireCore pri práci" class="about-img" loading="lazy" />
 			</div>
 			<div class="about-text">
 				<h2 id="about-heading" class="section-title">
@@ -256,7 +281,7 @@
 
 			<div class="service-grid">
 				<article class="service-card">
-					<img src="/images/high-voltage.webp" alt="" class="service-card-bg" aria-hidden="true" />
+					<img src="/images/high-voltage.webp" alt="" class="service-card-bg" aria-hidden="true" loading="lazy" />
 					<div class="service-icon">
 						<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 							<path d="M12 2v10" /><path d="M18.4 6.6a9 9 0 1 1-12.77.04" />
@@ -270,7 +295,7 @@
 				</article>
 
 				<article class="service-card">
-					<img src="/images/low-voltage.webp" alt="" class="service-card-bg" aria-hidden="true" />
+					<img src="/images/low-voltage.webp" alt="" class="service-card-bg" aria-hidden="true" loading="lazy" />
 					<div class="service-icon">
 						<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 							<path d="M12 20h.01" /><path d="M5 12.86a10 10 0 0 1 14 0" /><path d="M8.5 16.43a5 5 0 0 1 7 0" /><path d="M2 8.82a15 15 0 0 1 20 0" />
@@ -284,7 +309,7 @@
 				</article>
 
 				<article class="service-card">
-					<img src="/images/lightning-rod.webp" alt="" class="service-card-bg" aria-hidden="true" />
+					<img src="/images/lightning-rod.webp" alt="" class="service-card-bg" aria-hidden="true" loading="lazy" />
 					<div class="service-icon">
 						<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 							<path d="M6 16.33A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 .5 8.97" /><path d="m13 12-3 5h4l-3 5" />
@@ -298,7 +323,7 @@
 				</article>
 
 				<article class="service-card">
-					<img src="/images/photovoltaics.webp" alt="" class="service-card-bg" aria-hidden="true" />
+					<img src="/images/photovoltaics.webp" alt="" class="service-card-bg" aria-hidden="true" loading="lazy" />
 					<div class="service-icon">
 						<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 							<circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" />
