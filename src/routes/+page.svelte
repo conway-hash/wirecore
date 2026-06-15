@@ -1520,6 +1520,7 @@
 			grid-template-columns: 1fr;
 		}
 
+
 		.review-grid,
 		.gallery {
 			grid-template-columns: 1fr 1fr;
@@ -1601,6 +1602,14 @@
 		.gallery,
 		.field-row {
 			grid-template-columns: 1fr;
+		}
+
+		.contact-list {
+			grid-template-columns: 1fr;
+		}
+
+		.contact-list li:first-child {
+			grid-row: auto;
 		}
 
 		.hero-actions .btn {
