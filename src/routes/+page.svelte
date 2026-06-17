@@ -50,6 +50,27 @@
 	// 	{ category: 'Rozvádzač', title: 'Bytový rozvádzač' }
 	// ];
 
+	let formName = $state('');
+	let formEmail = $state('');
+	let formPhone = $state('');
+	let formMessage = $state('');
+	let formStatus = $state<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+	async function submitContact(e: SubmitEvent) {
+		e.preventDefault();
+		formStatus = 'loading';
+		try {
+			const res = await fetch('/api/contact', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ name: formName, email: formEmail, phone: formPhone, message: formMessage })
+			});
+			formStatus = res.ok ? 'success' : 'error';
+		} catch {
+			formStatus = 'error';
+		}
+	}
+
 	const reviews = [
 		{
 			text: '„Rýchla komunikácia, precízna práca a nič navyše. Elektrické rozvody v novostavbe hotové za pár dní, všetko na prvý pohľad. Odporúčam."',
@@ -466,26 +487,33 @@
 				<div class="contact-form-col">
 					<h2 id="contact-heading" class="section-title">Kontaktujte nás</h2>
 					<p class="contact-sub">Máte projekt? Napíšte nám a my sa vám ozveme s návrhom riešenia.</p>
-					<form>
+					<form onsubmit={submitContact}>
 						<div class="field">
 							<label for="name">Meno a priezvisko</label>
-							<input id="name" type="text" placeholder="Ján Novák" autocomplete="name" />
+							<input id="name" name="name" type="text" bind:value={formName} placeholder="Ján Novák" autocomplete="name" required />
 						</div>
 						<div class="field-row">
 							<div class="field">
 								<label for="email">E-mail</label>
-								<input id="email" type="email" placeholder="jan@example.com" autocomplete="email" />
+								<input id="email" name="email" type="email" bind:value={formEmail} placeholder="jan@example.com" autocomplete="email" required />
 							</div>
 							<div class="field">
 								<label for="phone">Telefón</label>
-								<input id="phone" type="tel" placeholder="+421 900 000 000" autocomplete="tel" />
+								<input id="phone" name="phone" type="tel" bind:value={formPhone} placeholder="+421 900 000 000" autocomplete="tel" />
 							</div>
 						</div>
 						<div class="field">
 							<label for="message">Správa / Popis projektu</label>
-							<textarea id="message" rows="4" placeholder="Ako vám môžeme pomôcť?"></textarea>
+							<textarea id="message" name="message" rows="4" bind:value={formMessage} placeholder="Ako vám môžeme pomôcť?" required></textarea>
 						</div>
-						<button type="submit" class="btn btn-primary btn-block">Odoslať</button>
+						{#if formStatus === 'success'}
+							<p class="form-feedback form-success">Správa bola odoslaná. Ozveme sa vám čoskoro!</p>
+						{:else if formStatus === 'error'}
+							<p class="form-feedback form-error">Odoslanie zlyhalo. Skúste to znova alebo nás kontaktujte priamo.</p>
+						{/if}
+						<button type="submit" class="btn btn-primary btn-block" disabled={formStatus === 'loading' || formStatus === 'success'}>
+							{formStatus === 'loading' ? 'Odosielam…' : 'Odoslať'}
+						</button>
 					</form>
 				</div>
 			</div>
@@ -1222,6 +1250,23 @@
 
 	.contact-link:hover {
 		color: var(--clr-accent);
+	}
+
+	.form-feedback {
+		padding: 0.75rem 1rem;
+		border-radius: 6px;
+		font-size: 0.9rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.form-success {
+		background: #d1fae5;
+		color: #065f46;
+	}
+
+	.form-error {
+		background: #fee2e2;
+		color: #991b1b;
 	}
 
 	.map-embed {

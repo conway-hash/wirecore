@@ -11,6 +11,7 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260617.1",
     "@sveltejs/adapter-static": "^3.0.8",
     "@sveltejs/kit": "^2.21.0",
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
@@ -19,5 +20,8 @@
     "svelte-check": "^4.1.6",
     "typescript": "^5.8.3",
     "vite": "^6.3.5"
+  },
+  "dependencies": {
+    "mimetext": "^3.0.28"
   }
 }
