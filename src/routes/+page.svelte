@@ -1,5 +1,4 @@
 <script lang="ts">
-	// let activeFilter = $state('Všetky');
 	let activeSection = $state('domov');
 	let cookieConsent = $state<string | null>(null);
 	let privacyOpen = $state(false);
@@ -39,16 +38,67 @@
 		updateActiveSection();
 	});
 
-	// Referencie – hidden until photos are ready
-	// const filters = ['Všetky', 'Bleskozvod', 'Hrubá stavba', 'Podlahové kúrenie', 'Rozvádzač'];
-	// const projects = [
-	// 	{ category: 'Rozvádzač', title: 'Priemyselný rozvádzač' },
-	// 	{ category: 'Hrubá stavba', title: 'Kabeláž novostavby' },
-	// 	{ category: 'Podlahové kúrenie', title: 'Elektrické rohože' },
-	// 	{ category: 'Bleskozvod', title: 'Ochrana pred bleskom' },
-	// 	{ category: 'Bleskozvod', title: 'Základový zemnič' },
-	// 	{ category: 'Rozvádzač', title: 'Bytový rozvádzač' }
-	// ];
+	// Filenames encode capture time (reference-YYYYMMDD-HHMMSS.webp); regenerate via
+	// scripts/optimize-references.mjs after dropping new photos into references-raw/.
+	const referencePhotoFiles = [
+		'reference-20260313-134200.webp',
+		'reference-20260314-115121.webp',
+		'reference-20260314-115354.webp',
+		'reference-20260314-115416.webp',
+		'reference-20260323-140130.webp',
+		'reference-20260323-170448.webp',
+		'reference-20260323-170514.webp',
+		'reference-20260325-163632.webp',
+		'reference-20260325-163732.webp',
+		'reference-20260417-153710.webp',
+		'reference-20260421-134716.webp',
+		'reference-20260422-144252.webp',
+		'reference-20260425-134354.webp'
+	];
+
+	const referencePhotos = referencePhotoFiles
+		.map((filename) => {
+			const match = filename.match(/(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})/);
+			const timestamp = match
+				? new Date(`${match[1]}-${match[2]}-${match[3]}T${match[4]}:${match[5]}:${match[6]}`).getTime()
+				: 0;
+			const base = filename.replace(/\.webp$/, '');
+			return {
+				src: `/references/${base}.webp`,
+				thumb: `/references/${base}-thumb.webp`,
+				title: match ? `Referencia – ${match[3]}.${match[2]}.${match[1]}` : base,
+				timestamp
+			};
+		})
+		.sort((a, b) => b.timestamp - a.timestamp);
+
+	let lightboxIndex = $state<number | null>(null);
+	const lightboxPhoto = $derived(lightboxIndex !== null ? referencePhotos[lightboxIndex] : null);
+
+	function openLightbox(index: number) {
+		lightboxIndex = index;
+	}
+
+	function closeLightbox() {
+		lightboxIndex = null;
+	}
+
+	function nextPhoto() {
+		if (lightboxIndex === null) return;
+		lightboxIndex = (lightboxIndex + 1) % referencePhotos.length;
+	}
+
+	function prevPhoto() {
+		if (lightboxIndex === null) return;
+		lightboxIndex = (lightboxIndex - 1 + referencePhotos.length) % referencePhotos.length;
+	}
+
+	function handleWindowKeydown(e: KeyboardEvent) {
+		if (lightboxIndex === null) return;
+		if (e.key === 'Escape') closeLightbox();
+		else if (e.key === 'ArrowRight') nextPhoto();
+		else if (e.key === 'ArrowLeft') prevPhoto();
+	}
 
 	let formName = $state('');
 	let formEmail = $state('');
@@ -59,11 +109,12 @@
 	async function submitContact(e: SubmitEvent) {
 		e.preventDefault();
 		formStatus = 'loading';
+		const token = (document.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement)?.value;
 		try {
 			const res = await fetch('/api/contact', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ name: formName, email: formEmail, phone: formPhone, message: formMessage })
+				body: JSON.stringify({ name: formName, email: formEmail, phone: formPhone, message: formMessage, token })
 			});
 			formStatus = res.ok ? 'success' : 'error';
 		} catch {
@@ -86,12 +137,10 @@
 		}
 	];
 
-	// const visibleProjects = $derived(
-	// 	activeFilter === 'Všetky' ? projects : projects.filter((p) => p.category === activeFilter)
-	// );
 </script>
 
 <svelte:head>
+	<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 	<title>WireCore | Elektroinštalácie, Bleskozvody, Fotovoltika – Trnavský kraj</title>
 	<meta
 		name="description"
@@ -166,14 +215,6 @@
 	<\/script>`}
 </svelte:head>
 
-<!-- iconBolt snippet – used by Referencie section, restore when uncommenting
-{#snippet iconBolt(cls: string = 'icon')}
-	<svg class={cls} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-		<path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" />
-	</svg>
-{/snippet}
--->
-
 {#snippet iconStar()}
 	<svg class="icon icon-star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 		<path
@@ -182,7 +223,23 @@
 	</svg>
 {/snippet}
 
-<svelte:window onscroll={updateActiveSection} />
+{#snippet iconClose()}
+	<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+		<path d="M18 6 6 18" /><path d="m6 6 12 12" />
+	</svg>
+{/snippet}
+
+{#snippet iconChevron(dir: 'left' | 'right')}
+	<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+		{#if dir === 'left'}
+			<path d="m15 18-6-6 6-6" />
+		{:else}
+			<path d="m9 18 6-6-6-6" />
+		{/if}
+	</svg>
+{/snippet}
+
+<svelte:window onscroll={updateActiveSection} onkeydown={handleWindowKeydown} />
 
 <!-- Header -->
 <header class="site-header">
@@ -281,13 +338,13 @@
 						<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 							<path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
 						</svg>
-						5+ rokov skúseností
+						10+ rokov skúseností
 					</div>
 					<div class="about-tag">
 						<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 							<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
 						</svg>
-						20+ projektov
+						200+ projektov
 					</div>
 				</div>
 			</div>
@@ -398,34 +455,21 @@
 		</div>
 	</section>
 
-	<!-- Referencie – hidden until photos are ready
+	<!-- Referencie -->
 	<section class="portfolio" id="referencie" aria-labelledby="portfolio-heading">
 		<div class="container">
 			<h2 id="portfolio-heading" class="section-title center">Referencie</h2>
 
-			<div class="filters" role="group" aria-label="Filter projektov">
-				{#each filters as filter (filter)}
-					<button
-						class="chip"
-						class:chip-active={activeFilter === filter}
-						onclick={() => (activeFilter = filter)}
-					>
-						{filter}
-					</button>
-				{/each}
-			</div>
-
 			<div class="gallery">
-				{#each visibleProjects as project (project.title)}
-					<article class="gallery-item">
-						<div class="gallery-visual" aria-hidden="true">
-							{@render iconBolt('icon gallery-bolt')}
-						</div>
-						<div class="gallery-caption">
-							<span class="gallery-category">{project.category}</span>
-							<h3>{project.title}</h3>
-						</div>
-					</article>
+				{#each referencePhotos as photo, i (photo.src)}
+					<button
+						type="button"
+						class="gallery-item"
+						onclick={() => openLightbox(i)}
+						aria-label={`Zobraziť fotografiu ${photo.title}`}
+					>
+						<img src={photo.thumb} alt={photo.title} loading="lazy" class="gallery-img" />
+					</button>
 				{/each}
 			</div>
 
@@ -434,7 +478,6 @@
 			</div>
 		</div>
 	</section>
-	-->
 
 	<!-- Kontakt -->
 	<section class="contact" id="kontakt" aria-labelledby="contact-heading">
@@ -506,6 +549,7 @@
 							<label for="message">Správa / Popis projektu</label>
 							<textarea id="message" name="message" rows="4" bind:value={formMessage} placeholder="Ako vám môžeme pomôcť?" required></textarea>
 						</div>
+						<div class="cf-turnstile" data-sitekey="0x4AAAAAADs3KxHl5xAkbad8" data-theme="dark" data-appearance="interaction-only"></div>
 						{#if formStatus === 'success'}
 							<p class="form-feedback form-success">Správa bola odoslaná. Ozveme sa vám čoskoro!</p>
 						{:else if formStatus === 'error'}
@@ -514,6 +558,7 @@
 						<button type="submit" class="btn btn-primary btn-block" disabled={formStatus === 'loading' || formStatus === 'success'}>
 							{formStatus === 'loading' ? 'Odosielam…' : 'Odoslať'}
 						</button>
+						<p class="form-privacy-note">Odoslaním formulára súhlasíte so spracovaním vašich osobných údajov podľa našej <button class="cookie-link" onclick={() => privacyOpen = true}>Ochrany súkromia</button>.</p>
 					</form>
 				</div>
 			</div>
@@ -539,15 +584,36 @@
 				<h3>2. Aké údaje zbierame</h3>
 				<p>Prostredníctvom kontaktného formulára zbierame meno, e-mailovú adresu, telefónne číslo a obsah správy. Tieto údaje slúžia výlučne na zodpovedanie vašej požiadavky.</p>
 
-				<h3>3. Cookies</h3>
-				<p>Táto stránka používa cookies výlučne prostredníctvom služby Google Maps (Google Ireland Limited). Cookies tretích strán sa načítajú iba po vašom súhlase. Môžete ich kedykoľvek odmietnuť.</p>
+				<h3>3. Právny základ spracovania</h3>
+				<p>Osobné údaje z kontaktného formulára spracúvame na základe oprávneného záujmu prevádzkovateľa (čl. 6 ods. 1 písm. f) GDPR) – konkrétne záujmu odpovedať na vašu dopytu a prípadne uzavrieť zmluvu o poskytnutí služieb.</p>
 
-				<h3>4. Uchovávanie údajov</h3>
+				<h3>4. Cookies</h3>
+				<p>Táto stránka používa cookies výlučne prostredníctvom služby Google Maps (Google Ireland Limited). Cookies tretích strán sa načítajú iba po vašom súhlase. Môžete ich kedykoľvek odmietnuť. Na overenie formulára používame službu Cloudflare Turnstile, ktorá spracúva technické signály prehliadača bez ukladania cookies.</p>
+
+				<h3>5. Uchovávanie údajov</h3>
 				<p>Osobné údaje z kontaktného formulára uchovávame maximálne 12 mesiacov alebo do vybavenia vašej požiadavky, podľa toho, čo nastane skôr.</p>
 
-				<h3>5. Vaše práva</h3>
+				<h3>6. Vaše práva</h3>
 				<p>Máte právo na prístup, opravu alebo vymazanie vašich osobných údajov. Žiadosť nám zašlite na info@wirecore.sk. V prípade sporu sa môžete obrátiť na Úrad na ochranu osobných údajov SR (uoou.sk).</p>
 			</div>
+		</div>
+	</div>
+{/if}
+
+{#if lightboxPhoto}
+	<div class="lightbox-backdrop" onclick={closeLightbox} onkeydown={(e) => e.key === 'Escape' && closeLightbox()} role="presentation">
+		<div class="lightbox" onclick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label={lightboxPhoto.title} tabindex="-1">
+			<button class="lightbox-close" onclick={closeLightbox} aria-label="Zavrieť">
+				{@render iconClose()}
+			</button>
+			<button class="lightbox-nav lightbox-prev" onclick={prevPhoto} aria-label="Predchádzajúca fotografia">
+				{@render iconChevron('left')}
+			</button>
+			<img src={lightboxPhoto.src} alt={lightboxPhoto.title} class="lightbox-img" />
+			<button class="lightbox-nav lightbox-next" onclick={nextPhoto} aria-label="Ďalšia fotografia">
+				{@render iconChevron('right')}
+			</button>
+			<p class="lightbox-title">{lightboxPhoto.title}</p>
 		</div>
 	</div>
 {/if}
@@ -555,7 +621,7 @@
 {#if cookieConsent === null}
 	<div class="cookie-banner" role="dialog" aria-label="Súhlas s cookies">
 		<p class="cookie-text">
-			Táto stránka zbiera údaje z kontaktného formulára a používa cookies od Google Maps. Viac info v
+			Táto stránka používa cookies od Google Maps na zobrazenie mapy. Viac info v
 			<button class="cookie-link" onclick={() => privacyOpen = true}>Ochrane súkromia</button>.
 		</p>
 		<div class="cookie-actions">
@@ -610,7 +676,6 @@
 		text-align: center;
 	}
 
-	/* .section-title.accent-border, .section-sub – used by Referencie, restore when uncommenting
 	.section-title.accent-border {
 		border-left: 4px solid var(--clr-accent);
 		padding-left: 1rem;
@@ -623,7 +688,6 @@
 		margin-inline: auto;
 		margin-bottom: 3rem;
 	}
-	*/
 
 	/* ---------- buttons ---------- */
 	.btn {
@@ -1108,23 +1172,35 @@
 		color: var(--clr-text);
 	}
 
-	/* ---------- portfolio – hidden until photos are ready ----------
+	/* ---------- portfolio ---------- */
 	.portfolio { padding-block: var(--section-gap); }
-	.filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-bottom: 3rem; }
-	.chip { padding: 0.5rem 1.5rem; border: none; border-radius: var(--radius-full); background: var(--clr-surface); color: var(--clr-body); font-size: 0.875rem; font-weight: 600; letter-spacing: 0.05em; transition: background 0.15s, color 0.15s; }
-	.chip:hover { background: var(--clr-surface-high); }
-	.chip-active { background: var(--clr-accent); color: var(--clr-on-accent); font-weight: 700; }
-	.gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-	.gallery-item { position: relative; aspect-ratio: 4 / 3; border-radius: var(--radius-md); overflow: hidden; background: var(--clr-surface); border: 1px solid var(--clr-surface-variant); display: flex; flex-direction: column; transition: border-color 0.3s; }
-	.gallery-item:hover { border-color: rgba(217, 255, 0, 0.5); }
-	.gallery-visual { flex: 1; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 40%, rgba(217, 255, 0, 0.06), transparent 65%), repeating-linear-gradient(-45deg, transparent 0, transparent 29px, rgba(255, 255, 255, 0.02) 29px, rgba(255, 255, 255, 0.02) 30px); }
-	.gallery-bolt { width: 3rem; height: 3rem; color: rgba(217, 255, 0, 0.25); transition: color 0.3s, filter 0.3s; }
-	.gallery-item:hover .gallery-bolt { color: rgba(217, 255, 0, 0.6); filter: drop-shadow(0 0 20px rgba(217, 255, 0, 0.3)); }
-	.gallery-caption { padding: 1.25rem 1.5rem; background: linear-gradient(to top, rgba(14, 14, 14, 0.9), rgba(14, 14, 14, 0.4)); }
-	.gallery-category { display: block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--clr-accent); margin-bottom: 0.25rem; }
-	.gallery-caption h3 { font-size: 1.25rem; font-weight: 600; color: var(--clr-text); }
+	.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 1rem; }
+	.gallery-item { position: relative; aspect-ratio: 4 / 3; border-radius: var(--radius-md); overflow: hidden; background: var(--clr-surface); border: 1px solid var(--clr-surface-variant); padding: 0; cursor: pointer; transition: border-color 0.3s, transform 0.2s; }
+	.gallery-item:hover { border-color: rgba(217, 255, 0, 0.5); transform: translateY(-2px); }
+	.gallery-item:focus-visible { outline: 2px solid var(--clr-accent); outline-offset: 2px; }
+	.gallery-img { width: 100%; height: 100%; object-fit: cover; display: block; }
 	.portfolio-cta { margin-top: 3rem; text-align: center; }
-	----------------------------------------------------------------------*/
+
+	/* ---------- lightbox ---------- */
+	.lightbox-backdrop { position: fixed; inset: 0; z-index: 300; background: rgba(0, 0, 0, 0.92); display: flex; align-items: center; justify-content: center; padding: 1rem; }
+	.lightbox { position: relative; display: flex; flex-direction: column; align-items: center; gap: 1rem; width: 100%; max-width: 1100px; max-height: 100dvh; outline: none; }
+	.lightbox-img { max-width: 100%; max-height: 78dvh; width: auto; height: auto; object-fit: contain; border-radius: var(--radius-md); }
+	.lightbox-title { color: var(--clr-text); font-size: 0.875rem; text-align: center; word-break: break-word; }
+	.lightbox-close { position: absolute; top: -0.5rem; right: -0.5rem; background: var(--clr-surface); border: 1px solid var(--clr-surface-variant); border-radius: var(--radius-full); padding: 0.5rem; color: var(--clr-text); display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+	.lightbox-close:hover { background: var(--clr-surface-high); }
+	.lightbox-nav { position: fixed; top: 50%; transform: translateY(-50%); z-index: 1; background: var(--clr-surface); border: 1px solid var(--clr-surface-variant); border-radius: var(--radius-full); padding: 0.75rem; color: var(--clr-text); display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+	.lightbox-nav:hover { background: var(--clr-surface-high); }
+	.lightbox-prev { left: 1rem; }
+	.lightbox-next { right: 1rem; }
+	.lightbox-nav .icon, .lightbox-close .icon { width: 1.5rem; height: 1.5rem; }
+
+	@media (max-width: 560px) {
+		.gallery { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.5rem; }
+		.lightbox-nav { padding: 0.5rem; }
+		.lightbox-nav .icon { width: 1.25rem; height: 1.25rem; }
+		.lightbox-prev { left: 0.25rem; }
+		.lightbox-next { right: 0.25rem; }
+	}
 
 	/* ---------- contact ---------- */
 	.contact {
@@ -1250,6 +1326,13 @@
 
 	.contact-link:hover {
 		color: var(--clr-accent);
+	}
+
+	.form-privacy-note {
+		font-size: 0.75rem;
+		color: var(--clr-muted);
+		opacity: 0.7;
+		text-align: center;
 	}
 
 	.form-feedback {
