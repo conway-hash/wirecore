@@ -1,8 +1,14 @@
 name = "wirecore"
 compatibility_date = "2026-06-11"
+main = "src/worker.ts"
 
 [assets]
 directory = "./build"
+binding = "ASSETS"
 
 [observability]
 enabled = false
+
+[[send_email]]
+name = "EMAIL"
+destination_address = "info@wirecore.sk"
