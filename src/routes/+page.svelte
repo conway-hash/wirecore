@@ -45,7 +45,6 @@
 		'reference-20260314-115121.webp',
 		'reference-20260314-115354.webp',
 		'reference-20260314-115416.webp',
-		'reference-20260323-140130.webp',
 		'reference-20260323-170448.webp',
 		'reference-20260323-170514.webp',
 		'reference-20260325-163632.webp',
