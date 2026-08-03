@@ -41,18 +41,18 @@
 	// Filenames encode capture time (reference-YYYYMMDD-HHMMSS.webp); regenerate via
 	// scripts/optimize-references.mjs after dropping new photos into references-raw/.
 	const referencePhotoFiles = [
-		'reference-20260313-134200.webp',
-		'reference-20260314-115121.webp',
-		'reference-20260314-115354.webp',
-		'reference-20260314-115416.webp',
-		'reference-20260323-170448.webp',
-		'reference-20260323-170514.webp',
-		'reference-20260325-163632.webp',
-		'reference-20260325-163732.webp',
-		'reference-20260417-153710.webp',
-		'reference-20260421-134716.webp',
-		'reference-20260422-144252.webp',
-		'reference-20260425-134354.webp'
+		'reference-20260314-115122.webp',
+		'reference-20260323-170516.webp',
+		'reference-20260417-153704.webp',
+		'reference-20260616-140338.webp',
+		'reference-20260616-140739.webp',
+		'reference-20260701-171920.webp',
+		'reference-20260716-144600.webp',
+		'reference-20260723-184203.webp',
+		'reference-20260728-153440.webp',
+		'reference-20260729-165550.webp',
+		'reference-20260730-133029.webp',
+		'reference-20260730-134454.webp'
 	];
 
 	const referencePhotos = referencePhotoFiles
@@ -337,7 +337,7 @@
 						<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 							<path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
 						</svg>
-						10+ rokov skúseností
+						5+ rokov skúseností
 					</div>
 					<div class="about-tag">
 						<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
